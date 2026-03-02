@@ -1,0 +1,22 @@
+model User {
+    id String @id @default(cuid())
+    name String
+    surename String
+    email String @unique 
+    password String
+    role String
+    vehicle Vehicle?
+    departamentId String @map("departament_id") 
+    departament Departament @relation("DepartmentUsers", fields: [departamentId], references: [id])
+    workPlace String  @map("work_place")
+    foremanOfDepartament  Departament? @relation("DepartmentForeman")
+
+    brigaderOfDepartament Departament? @relation("DepartmentBrigader")
+
+    createdAt DateTime @default(now())  @map("created_at")  
+    updatedAt DateTime @updatedAt @map("update_at")  
+    @@map("users")
+}  
+
+
+
