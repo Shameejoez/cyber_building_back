@@ -1,6 +1,6 @@
 model Brigade {
-    id String @unique @default(cuid())
-    departamentId String @unique @map("departament_id")
+    id Int @unique @default(autoincrement())
+    departamentId Int @unique @map("departament_id")
     departament Departament @relation(fields: [departamentId], references: [id])
 
     createdAt DateTime @default(now())  @map("created_at")  

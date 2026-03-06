@@ -1,12 +1,12 @@
 model User {
-    id String @id @default(cuid())
+    id Int @id @default(autoincrement())
     name String
     surename String
     email String @unique 
     password String
     role String
     vehicle Vehicle?
-    departamentId String @map("departament_id") 
+    departamentId Int @map("departament_id") 
     departament Departament @relation("DepartmentUsers", fields: [departamentId], references: [id])
     workPlace String  @map("work_place")
     foremanOfDepartament  Departament? @relation("DepartmentForeman")

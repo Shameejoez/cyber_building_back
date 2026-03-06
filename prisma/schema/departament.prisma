@@ -1,15 +1,15 @@
 model Departament {
-    id String @unique @default(cuid())
+    id Int @unique @default(autoincrement())
     name String
     warehouse Warehouse?
     users User[] @relation("DepartmentUsers") 
     brigades Brigade[]
 
-    foremanId String @unique @map("foreman_id")
-    foreman User @relation("DepartmentForeman", fields: [foremanId], references: [id])
+    foremanId Int? @unique @map("foreman_id")
+    foreman User? @relation("DepartmentForeman", fields: [foremanId], references: [id])
 
-    brigaderId String @unique  @map("brigader_id")
-    brigader User @relation("DepartmentBrigader", fields: [brigaderId], references: [id])
+    brigaderId Int? @unique  @map("brigader_id")
+    brigader User? @relation("DepartmentBrigader", fields: [brigaderId], references: [id])
 
     createdAt DateTime @default(now())  @map("created_at")  
     updatedAt DateTime @updatedAt @map("update_at")
