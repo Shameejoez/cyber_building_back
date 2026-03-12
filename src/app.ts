@@ -9,5 +9,5 @@ app.use(express.json())
 app.use('/', router)
 
 app.listen(port, () => {
-  console.log(`Example appdddd listening on port ${port}`)
+  console.log(`App listening on port ${port}`)
 })
