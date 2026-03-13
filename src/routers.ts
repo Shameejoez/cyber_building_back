@@ -4,6 +4,7 @@ import authController from './authController.js'
 import { check } from 'express-validator'
 import { chekAuthMiddleware } from './middleware/checkAuthMiddleware.js'
 import { isAdminMiddleware } from './middleware/chekAdminRole.js'
+import patchController from './patchController.js'
 const router = express.Router()
 
 router.get('/getDepartaments', dataController.getDepartaments)
@@ -15,7 +16,9 @@ router.post('/registration',
     ], authController.registration)
 
 router.get('/getUsers', [isAdminMiddleware], dataController.getUsers)
+router.get('/getUser', [isAdminMiddleware], dataController.getUser)
 router.post('/login', authController.login)
 router.post('/createUser', [isAdminMiddleware], authController.registration)
+router.patch('/patchUser', [isAdminMiddleware], patchController.patchUser)
 
 export default router

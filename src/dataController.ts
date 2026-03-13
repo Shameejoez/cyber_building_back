@@ -6,7 +6,7 @@ import "dotenv/config"
 import bcrypt from 'bcrypt'
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
-const prisma = new PrismaClient({ adapter: pool })
+export const prisma = new PrismaClient({ adapter: pool })
 
 const createDepartament: Departament = {
     brigaderId: null,
@@ -38,7 +38,7 @@ class dataController {
                 const departaments = await prisma.departament.create({
                 data: createDepartament
               })
-              console.log(res.statusCode)
+              res.json(res.status).json(departaments)
         } catch (e) {
               console.log(e)
         }
@@ -57,16 +57,52 @@ class dataController {
 
     }
 
-        async getUsers (req: Request, res: Response) {
-           console.log(bcrypt.hashSync("password", 10)) 
-             console.log('sss')
+    async getUsers (req: Request, res: Response) {
         try {
-              const users = await prisma.user.findMany()
+              const users = await prisma.user.findMany({
+                select: {
+                        departamentId: true,
+                        email: true,
+                        id: true,
+                        name: true,
+                        surename: true,
+                        workPlace: true,
+                        role: true,
+                        createdAt: true,
+                        updatedAt: true
+                }
+              })
               res.json(users)
               console.log(res.statusCode)
         } catch (e) {
               console.log(e, 'sss')
         }
+
+    }
+
+    async getUser (req: Request, res: Response) {
+        const {id} = req.body as Pick<User, 'id'>
+        try {
+            const users = await prisma.user.findUnique({
+                where: {id},
+                select: {
+                        departamentId: true,
+                        email: true,
+                        id: true,
+                        name: true,
+                        surename: true,
+                        workPlace: true,
+                        role: true,
+                        createdAt: true,
+                        updatedAt: true
+                }
+            })
+              res.json(users)
+              console.log(res.statusCode)
+        } catch (e) {
+              console.log(e, 'sss')
+        }
+
 
     }
 }
