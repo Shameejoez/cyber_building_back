@@ -32,4 +32,5 @@ postgress/ORMprisma/express/typescript
 .env
 
 ## 📞 Контакты
-(как найти автора)
+telegram --- @shamezo
+nachozzzz224@gmail.com
