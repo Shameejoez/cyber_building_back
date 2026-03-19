@@ -29,7 +29,10 @@ src/
 ## 🛠 Технологии
 postgress/ORMprisma/express/typescript
 ## 📦 Переменные окружения
+```
 config.ts
+.env
+```
 
 ## 📞 Контакты
 telegram --- @shamezo |
