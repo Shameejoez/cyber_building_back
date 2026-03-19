@@ -6,17 +6,22 @@
 ## 🚀 Быстрый старт
 ---------------------
 
+## 🏗️ Архитектура проекта
+
+```
 src/
-├── 📁 middleware/          # Промежуточные обработчики
-│   ├── checkAuthMiddleware.ts
-│   └── chekAdminRole.ts
-├── 📄 app.ts                # Основной файл приложения
-├── 📄 authController.ts     # Логика авторизации
-├── 📄 config.ts             # Конфигурация
-├── 📄 dataController.ts     # Работа с данными
-├── 📄 patchController.ts    # Обновления
-├── 📄 routers.ts            # Все маршруты API
-└── 📄 type.d.ts             # Типы TypeScript
+├── middleware/
+│   ├── checkAuthMiddleware.ts    # Проверка авторизации
+│   └── chekAdminRole.ts          # Проверка прав администратора
+├── app.ts                         # Инициализация Express
+├── authController.ts              # Логика входа/регистрации
+├── config.ts                      # Конфигурация и переменные
+├── dataController.ts              # Работа с заявками и складом
+├── patchController.ts             # Обновление данных
+├── routers.ts                      # Все маршруты API
+└── type.d.ts                       # TypeScript типы
+```
+
 ## 📚 API Документация
 (таблицы с эндпоинтами и примерами)
 
