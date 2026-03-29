@@ -75,16 +75,24 @@ class dataController {
               res.json(users)
               console.log(res.statusCode)
         } catch (e) {
-              console.log(e, 'sss')
+              console.log(e, 'Ошибка при получении пользователя');
+              res.status(500).json({message: "Внутренняя ошибка сервера"});
         }
 
     }
 
     async getUser (req: Request, res: Response) {
-        const {id} = req.body as Pick<User, 'id'>
+        const id = req.params.id as string
         try {
-            const users = await prisma.user.findUnique({
-                where: {id},
+            if(!id || !parseInt(id) ) {
+               return res.status(400).json({message: "В запросе нет id"})
+                
+            } 
+            
+            const numId = parseInt(id)
+
+            const user = await prisma.user.findUnique({
+                where: {id: numId},
                 select: {
                         departamentId: true,
                         email: true,
@@ -97,12 +105,19 @@ class dataController {
                         updatedAt: true
                 }
             })
-              res.json(users)
-              console.log(res.statusCode)
-        } catch (e) {
-              console.log(e, 'sss')
-        }
 
+              if (!user) {
+               return res.status(404).json({message: "Пользователь не найден"});
+
+              }
+
+              res.json(user)
+              console.log(res.statusCode)
+
+        } catch (e) {
+              console.log(e, 'Ошибка при получении пользователя');
+              res.status(500).json({message: "Внутренняя ошибка сервера"});
+        }
 
     }
 }

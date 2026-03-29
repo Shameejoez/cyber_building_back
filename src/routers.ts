@@ -16,7 +16,7 @@ router.post('/registration',
     ], authController.registration)
 
 router.get('/getUsers', [isAdminMiddleware], dataController.getUsers)
-router.get('/getUser', [isAdminMiddleware], dataController.getUser)
+router.get('/getUser/:id', [isAdminMiddleware], dataController.getUser)
 router.post('/login', authController.login)
 router.post('/createUser', [isAdminMiddleware], authController.registration)
 router.patch('/patchUser', [isAdminMiddleware], patchController.patchUser)
