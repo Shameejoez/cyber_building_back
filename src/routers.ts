@@ -20,5 +20,6 @@ router.get('/getUser/:id', [isAdminMiddleware], dataController.getUser)
 router.post('/login', authController.login)
 router.post('/createUser', [isAdminMiddleware], authController.registration)
 router.patch('/patchUser', [isAdminMiddleware], patchController.patchUser)
+router.post('/logout', authController.logout)
 
 export default router

@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import {secret} from './config.js'
+import { revokedToken, revokeToken } from './utils/blacklist.js'
+
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter: pool })
@@ -42,35 +44,35 @@ const createdUser : Omit<User, "id" | 'createdAt' | 'updatedAt'> = {
 class authController {
 
     async registration (req: Request, res: Response) {
-                console.log('sssssss')
+
         try {
                 const errors = validationResult(req)
                 if (!errors.isEmpty()) {
                     return res.status(403).json({message: 'Ошибка регистрации', errors})
                 }
-                const {email, password} = req.body
+                const data: Omit<User, 'createdAt' | 'updatedAt' | 'id'> = req.body 
                 const current = await prisma.user.findFirst({
-                    where: {email: email}
+                    where: {email: data.email!}
                 })
                 if (current) {
                     return res.status(403).json({message: "Пользователь с таким email уже существует"})
                 }
-                const hachPassword = bcrypt.hashSync(password, 10)
-                const newUser = {...createdUser,
+                const hachPassword = bcrypt.hashSync(data.password!, 10)
+                const newUser = {...data,
                     password: hachPassword
                 }
                     console.log(newUser)
-                    await prisma.user.create({
+                   const addedUsser = await prisma.user.create({
                     data: newUser
                 })
-                return res.json({message: 'Пользователь успешно зарегестрирован'})
+                return res.json({message: 'Пользователь успешно зарегестрирован'}, ).json(addedUsser)
         } catch (e) {
                console.log(e, 't')
         }
     }
 
     async login (req: Request, res: Response) {
-     
+        
         try {
             const {email, password} = req.body
             const current = await prisma.user.findFirst({
@@ -81,10 +83,42 @@ class authController {
                    return res.status(400).json({message: "Неверный email или пароль"})
                 }
             const token = generateAccessToken({email: current.email, role: current.role})
+            console.log(token)
             return res.json(token)
+           
         } catch (error) {
             
         }
+    }
+
+    async logout (req: Request, res: Response) {
+        let decoded: jwt.JwtPayload
+
+        const token = req.headers.authorization?.split(' ')[1]
+
+        if (!token) {
+            return res.status(401).json({message: 'Токен отсутствует'})
+         }  
+
+        try {
+           decoded = jwt.verify(token, secret) as jwt.JwtPayload
+
+        } catch (error) {   
+
+            if (error instanceof jwt.TokenExpiredError) {
+                // Токен истёк - не добавляем в чёрный список, просто выходим
+                return res.status(200).json({ message: 'Выход выполнен (токен уже истёк)' })
+            }
+            return res.status(401).json({ message: 'Невалидный токен' })
+        }
+        
+        // вычисляем сколько времени осталось жить токену
+        const remainingTime = decoded.exp! - Math.floor(Date.now() / 1000)
+        if (remainingTime > 0) {
+            revokeToken(token, remainingTime)
+        }
+
+        return res.status(200).json({message: "Успешный выход"})
     }
 }
 
