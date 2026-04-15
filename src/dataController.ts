@@ -30,6 +30,8 @@ const createdUser: User = {
     updatedAt: new Date()
 }
 
+type gettyUsersData = Partial<Pick<User, 'departamentId' | 'name' | 'surename' | 'workPlace' | 'role'>>
+
 
 class dataController {
     async createDepartament (req: Request, res: Response) {
@@ -117,6 +119,42 @@ class dataController {
         } catch (e) {
               console.log(e, 'Ошибка при получении пользователя');
               res.status(500).json({message: "Внутренняя ошибка сервера"});
+        }
+
+    }
+    // тестовый запрос
+    //Поиск юзеров по опциональным полям
+    async gettyUsers (req: Request, res: Response) {
+        const serchedData = req.body as gettyUsersData
+
+        try {
+             const users = await prisma.user.findMany({
+                where: {
+                      ...(serchedData.name && {
+                          name: {contains: serchedData.name},
+                      }),
+                      ...(serchedData.surename && {
+                          surename: {contains: serchedData.surename},
+                      }),
+                      ...(serchedData.workPlace && {
+                          workPlace: {contains: serchedData.workPlace},
+                      }),
+                      ...(serchedData.role && {
+                          role: {equals: serchedData.role},
+                      }),
+                      ...(serchedData.departamentId && {
+                          departamentId: {equals: serchedData.departamentId},
+                      }),  
+  
+                    },
+                });
+
+                res.json(users).status(200).json({message: 'Юзер лист готов'})
+        } catch (e) {
+            console.error('Failed to fetch users:', e);
+            res.status(500).json({ 
+            message: 'Ошибка сервера' 
+        });
         }
 
     }
