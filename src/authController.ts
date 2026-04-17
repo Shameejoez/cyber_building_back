@@ -61,7 +61,7 @@ class authController {
                 const newUser = {...data,
                     password: hachPassword
                 }
-                    console.log(newUser)
+                   console.log(newUser)
                    const addedUsser = await prisma.user.create({
                     data: newUser
                 })
@@ -84,6 +84,7 @@ class authController {
                 }
             const token = generateAccessToken({email: current.email, role: current.role})
             console.log(token)
+            console.log(current)
             return res.json(token)
            
         } catch (error) {
@@ -101,6 +102,7 @@ class authController {
          }  
 
         try {
+            
            decoded = jwt.verify(token, secret) as jwt.JwtPayload
 
         } catch (error) {   

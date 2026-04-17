@@ -4,6 +4,7 @@ import type {Request, Response, ErrorRequestHandler} from "express"
 import type { User, Departament } from './generated/prisma/client.js'
 import "dotenv/config"
 import bcrypt from 'bcrypt'
+import { users } from './utils/createUsers.js'
 
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 export const prisma = new PrismaClient({ adapter: pool })
@@ -122,6 +123,23 @@ class dataController {
         }
 
     }
+
+    async addManyUsers (req: Request, res: Response) {
+       const data = users
+        console.log('pusk')
+        try {
+            await prisma.user.createMany({
+            data: data,
+            skipDuplicates: true,
+        })
+
+        return res.status(200).json({message: `Успешно добавленно ${data.length} пользователей`})
+
+        } catch (e) {
+            console.log("Ошибка создания")
+        }
+        
+    } 
     // тестовый запрос
     //Поиск юзеров по опциональным полям
     async gettyUsers (req: Request, res: Response) {
